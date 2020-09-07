@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -21,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private Timer currentTimer;
     private boolean isNotClick = false;
     private boolean isOneTimeClicked = false;
-    private int temp;
+    static int mLastRandomNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,20 +60,21 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        int random;
-                        final int min = 1;
-                        final int max = 4;
-                        int oldTemp = temp;
-                        random = new Random().nextInt((max - min) + 1) + min;
-                        temp = random;
-                        if (oldTemp == temp) {
-                            random = new Random().nextInt((max - min) + 1) + min;
-                        }
-                        showRandomView(random);
+                        showRandomView(getRandomBetweenRange(1,4));
                     }
                 });
             }
         }, 0, 1000);
+    }
+
+    public static int getRandomBetweenRange(int min, int max) {
+        int currentRandomNumber = (int) ((Math.random() * ((max - min) + 1)) + min);
+        if (mLastRandomNumber == currentRandomNumber)
+            return getRandomBetweenRange(1, 4);
+        else {
+            mLastRandomNumber = currentRandomNumber;
+            return currentRandomNumber;
+        }
     }
 
     private void showRandomView(int random) {
@@ -98,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
             viewGreenGrey.setVisibility(View.VISIBLE);
             clickOnGrey(viewGreenGrey);
         }
-
         clickOnOthers(viewRed);
         clickOnOthers(viewBlue);
         clickOnOthers(viewYellow);
